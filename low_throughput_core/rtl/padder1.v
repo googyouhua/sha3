@@ -16,11 +16,15 @@
 
 /*
  *     in      byte_num     out
- * 0x11223344      0    0x01000000
- * 0x11223344      1    0x11010000
- * 0x11223344      2    0x11220100
- * 0x11223344      3    0x11223301
+ * 0x11223344      0    0x0M000000
+ * 0x11223344      1    0x110M0000
+ * 0x11223344      2    0x11220M00
+ * 0x11223344      3    0x1122330M
+ *
+ * where M=01 for the original keccak and =06 for FIPS compat.
  */
+
+`define FIPS_COMPAT 1
 
 module padder1(in, byte_num, out);
     input      [31:0] in;
@@ -29,9 +33,16 @@ module padder1(in, byte_num, out);
     
     always @ (*)
       case (byte_num)
-        0: out = 32'h1000000;
+`ifdef FIPS_COMPAT
+        0: out = 32'h06000000;
+        1: out = {in[31:24], 24'h060000};
+        2: out = {in[31:16], 16'h0600};
+        3: out = {in[31:8],   8'h06};
+`else
+        0: out = 32'h01000000;
         1: out = {in[31:24], 24'h010000};
         2: out = {in[31:16], 16'h0100};
         3: out = {in[31:8],   8'h01};
+`endif
       endcase
 endmodule
