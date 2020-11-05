@@ -17,6 +17,8 @@
 /* if "ack" is 1, then current input has been used. */
 
 module f_permutation(clk, reset, in, in_ready, ack, out, out_ready);
+    parameter MDLEN = 512;
+
     input               clk, reset;
     input      [575:0]  in;
     input               in_ready;
@@ -53,7 +55,7 @@ module f_permutation(clk, reset, in, in_ready, ack, out, out_ready);
       else if (i[22]) // only change at the last round
         out_ready <= 1;
 
-    assign round_in = accept ? {in ^ out[1599:1599-575], out[1599-576:0]} : out;
+    assign round_in = accept ? {in ^ out[1599:1599-575], out[1599-576:0]} ^ (1'b1 << (2*MDLEN+63)) : out;
 
     rconst
       rconst_ ({i, accept}, rc);

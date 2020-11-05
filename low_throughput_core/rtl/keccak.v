@@ -24,6 +24,8 @@
 `define high_pos2(w,b)    (`low_pos2(w,b) + 7)
 
 module keccak(clk, reset, in, in_ready, is_last, byte_num, buffer_full, out, out_ready);
+    parameter MDLEN = 512;
+
     input              clk, reset;
     input      [31:0]  in;
     input              in_ready, is_last;
@@ -90,7 +92,7 @@ module keccak(clk, reset, in, in_ready, is_last, byte_num, buffer_full, out, out
     padder
       padder_ (clk, reset, in, in_ready, is_last, byte_num, buffer_full, padder_out_1, padder_out_ready, f_ack);
 
-    f_permutation
+    f_permutation #(.MDLEN(MDLEN))
       f_permutation_ (clk, reset, padder_out, padder_out_ready, f_ack, f_out, f_out_ready);
 endmodule
 

@@ -73,16 +73,10 @@ module padder(clk, reset, in, in_ready, is_last, byte_num, buffer_full, out, out
     always @ (*)
       begin
         if (state)
-          begin
-            v1 = 0;
-            v1[7] = v1[7] | i[16]; // "v1[7]" is the MSB of the last byte of "v1"
-          end
+          v1 = 0;
         else if (is_last == 0)
           v1 = in;
         else
-          begin
-            v1 = v0;
-            v1[7] = v1[7] | i[16];
-          end
+          v1 = v0;
       end
 endmodule
